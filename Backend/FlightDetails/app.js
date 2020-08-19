@@ -1,17 +1,16 @@
-//this is for request handling
 const express = require('express')
-const app = express();
+const app = express()
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 const morgan = require('morgan');
-const bodyparser = require('body-parser')
-const mongoose = require('mongoose');
 
-const userRoutes = require('./Routes/user')
+const flightDetailsRoutes = require('./Routes/flightDetails')
 
-mongoose.connect("mongodb+srv://himali:himali@cluster1.eeyiw.mongodb.net/UserProfile?retryWrites=true&w=majority", { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://himali:himali@cluster1.eeyiw.mongodb.net/FlightDB?retryWrites=true&w=majority", { useNewUrlParser: true })
 
-app.use(morgan('dev'));
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -23,14 +22,13 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use('/user', userRoutes)
-
+app.use('/flight', flightDetailsRoutes);
 app.use((req, res, next) => {
+    console.log("app")
     const error = new Error('Not found');
     error.status = 404;
     next(error);
 })
-
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
@@ -40,4 +38,4 @@ app.use((error, req, res, next) => {
     })
 })
 
-module.exports = app;
+module.exports = app
